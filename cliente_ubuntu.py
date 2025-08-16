@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import socket
 import json
 from protocolo import *
@@ -9,11 +6,11 @@ from game import Game
 def send_message(sock, msg):
     sock.send(msg.encode('utf-8'))
 
-# Buffer global para mensagens incompletas
+# bufferpara mensagens incompletas
 message_buffer = ""
 
 def receive_message(sock):
-    """Recebe mensagem do servidor e retorna código e corpo"""
+    """Recebe mensagem do servidor e retorna cod e corpo"""
     global message_buffer
     
     try:
@@ -21,41 +18,36 @@ def receive_message(sock):
         if not data:
             return None, None
         
-        # Adicionar dados ao buffer
+        # add dados no buffer
         message_buffer += data.decode('utf-8', errors='ignore')
         
-        # Processar mensagens completas no buffer
+        # processa msgs completas no buffer
         while '\n' in message_buffer:
-            # Encontrar a primeira mensagem completa
             lines = message_buffer.split('\n', 2)
             if len(lines) >= 2:
                 code = lines[0]
                 body = lines[1]
-                
-                # Se há mais dados, manter no buffer
                 if len(lines) > 2:
                     message_buffer = '\n'.join(lines[2:])
                 else:
                     message_buffer = ""
-                
-                # Se o body parece ser JSON seguido de outro código, separar
+
                 if body.startswith('{') and '}' in body:
                     json_end = body.find('}') + 1
                     if json_end < len(body):
-                        # Há dados após o JSON
+                        # tem dados dps do JSON
                         actual_body = body[:json_end]
                         remaining = body[json_end:]
-                        # Adicionar o resto de volta ao buffer
+                        # add o resto no buffer
                         message_buffer = remaining + message_buffer
                         return code, actual_body
                 
                 return code, body
             else:
-                # Mensagem incompleta, aguardar mais dados
+                # msg incompleta
                 break
         
-        # Se chegou aqui, não há mensagem completa disponível
-        # Tentar novamente na próxima chamada
+
         return receive_message(sock)
         
     except Exception as e:
@@ -63,7 +55,7 @@ def receive_message(sock):
         return None, None
 
 def main():
-    print("🚢 CLIENTE BATALHA NAVAL 🚢")
+    print(" CLIENTE BATALHA NAVAL ")
     print("=" * 40)
     
     # Solicitar dados de conexão
@@ -98,7 +90,7 @@ def main():
                 # Interpretar códigos do protocolo
                 print(f"[DEBUG] Código recebido: {code}")
                 
-                if code == RESPONSE_TURN or code == "205":
+                if code == ATAQUE_OPONENTE or code == "205":
                     print("\n🎯 Sua vez de atacar!")
                     coords = input("Digite coordenadas x,y (exemplo: 3,5): ")
                     try:
@@ -114,25 +106,25 @@ def main():
                         print("❌ Formato inválido! Use: x,y")
                         continue
                         
-                elif code == RESPONSE_WAITING or code == "201":
-                    print("⏳ Aguardando ataques do oponente...")
+                elif code == ESPERANDO_OPONENTE or code == "201":
+                    print(" Aguardando ataques do oponente...")
                     
-                elif code == ATTACK_HIT or code == "101":
-                    print(f"🎯 {body}")
+                elif code == ATAQUE_ACERTO or code == "101":
+                    print(f" {body}")
                     
-                elif code == ATTACK_MISS or code == "100":
+                elif code == ATAQUE_FALHOU or code == "100":
                     print(f"❌ {body}")
                     
-                elif code in [SHIP_CARRIER, SHIP_BATTLESHIP, SHIP_CRUISER, SHIP_SUBMARINE, SHIP_FRIGATE, SHIP_TORPEDO]:
+                elif code in [PORTA_AVIOES, ENCOURACADO, CRUZADOR, SUBMARINO, FRAGATA, TORPEDEIRO]:
                     print(f"💥 {body}")
                     
-                elif code == RESPONSE_VICTORY or code == "203":
+                elif code == VENCEU or code == "203":
                     print(f"� {body}")
                     
-                elif code == RESPONSE_DEFEAT or code == "204":
+                elif code == PERDEU or code == "204":
                     print(f"💀 {body}")
                     
-                elif code == RESPONSE_GAME_END or code == "202":
+                elif code == FIM_PARTIDA or code == "202":
                     print(f"🎮 {body}")
                     break
                     
@@ -175,3 +167,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
