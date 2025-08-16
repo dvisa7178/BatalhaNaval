@@ -75,7 +75,7 @@ class Game:
     @staticmethod
     def print_map(board, title):
         """Imprime o mapa em formato de matriz para Ubuntu"""
-        print(f"\n📋 {title}")
+        print(f"\n{title}")
         print("━" * 42)
         
         # Cabeçalho das colunas
@@ -114,8 +114,8 @@ class Game:
         print("  └" + "───┴" * 9 + "───┘")
         
         # Legenda
-        print("📖 Legenda: · = Água | ✗ = Acerto | ○ = Erro")
-        print("🚢 Navios: A=Porta-aviões B=Encouraçado C=Cruzador S=Submarino F=Fragata T=Torpedeiro\n")
+        print("Legenda: · = Água | ✗ = Acerto | ○ = Erro")
+        print("Navios: A=Porta-aviões B=Encouraçado C=Cruzador S=Submarino F=Fragata T=Torpedeiro\n")
         
     @staticmethod
     def print_map_simple(board, title):
