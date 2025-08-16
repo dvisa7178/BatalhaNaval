@@ -58,7 +58,7 @@ python3 cliente_ubuntu.py
 
 ## Resolução de Problemas
 
-### Se os caracteres Unicode não aparecerem corretamente:
+### Se o tabuleiro não aparecer direito:
 Edite `game.py` e troque na linha do cliente:
 ```python
 Game.print_map(payload["own_map"], "SEU TABULEIRO")
@@ -69,7 +69,7 @@ Game.print_map_simple(payload["own_map"], "SEU TABULEIRO")
 ```
 
 ### Se houver problemas de conexão:
-1. Verifique se o firewall permite conexões na porta 12345
-2. Confirme que ambos estão na mesma rede
-3. Use `ip addr` para verificar o IP correto
+1. Confirme que ambos estão na mesma rede
+2. Use `ip addr` para verificar se o IP correto
+
 
