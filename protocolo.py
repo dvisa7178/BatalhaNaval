@@ -1,34 +1,34 @@
 # Tipos de mensagem base
-ATTACK = "100 ATTACK"
-RESPONSE = "200 RESPONSE"
+ATAQUE = "100 ATAQUE"
+RESPOSTA = "200 RESPOSTA"
 INFO = "300 INFO"
 
-# Códigos de ataque específicos
-ATTACK_MISS = "100"      # Erro/Miss
-ATTACK_HIT = "101"       # Acerto
-ATTACK_CONSECUTIVE = "102"  # Acertos consecutivos
-SHIP_CARRIER = "103"     # Afundou porta-aviões
-SHIP_BATTLESHIP = "104"  # Afundou encouraçado
-SHIP_CRUISER = "105"     # Afundou cruzador
-SHIP_SUBMARINE = "106"   # Afundou submarino
-SHIP_FRIGATE = "107"     # Afundou fragata
-SHIP_TORPEDO = "108"     # Afundou torpedeiro
+# Códigos de ataque 
+ATAQUE_FALHOU = "100"      # errou
+ATAQUE_ACERTO = "101"       # acertou
+ATAQUES_SEQ = "102"  # acertos em sequencia
+PORTA_AVIOES = "103"     # afundou porta avioes
+ENCOURACADO = "104"  # afundou encouraçado
+CRUZADOR = "105"     # afundou cruzador
+SUBMARINO = "106"   # afundou submarino
+FRAGATA = "107"     # afundou fragata
+TORPEDEIRO = "108"     #afundou torpedeiro
 
-# Códigos de resposta específicos
-RESPONSE_WAITING = "201"  # Aguardando oponente
-RESPONSE_GAME_END = "202" # Fim de jogo
-RESPONSE_VICTORY = "203"  # Vitória
-RESPONSE_DEFEAT = "204"   # Derrota
-RESPONSE_TURN = "205"     # Seu turno
+# Códigos de resposta 
+ESPERANDO_OPONENTE = "201"  # esperando oponente atacar
+FIM_PARTIDA = "202" # fim do jogo
+VENCEU = "203"  # ganhou
+PERDEU = "204"   # perdeu
+ATAQUE_OPONENTE = "205"     # teu turno
 
 # Mapeamento de navios para códigos
 SHIP_CODES = {
-    "A": SHIP_CARRIER,     # Porta-aviões
-    "B": SHIP_BATTLESHIP,  # Encouraçado
-    "C": SHIP_CRUISER,     # Cruzador
-    "S": SHIP_SUBMARINE,   # Submarino
-    "F": SHIP_FRIGATE,     # Fragata
-    "T": SHIP_TORPEDO      # Torpedeiro
+    "A": PORTA_AVIOES,     # porta avioes
+    "B": ENCOURACADO,  # encouraçado
+    "C": CRUZADOR,     # cruzador
+    "S": SUBMARINO,   # submarino
+    "F": FRAGATA,     # fragata
+    "T": TORPEDEIRO      # torpedeiro
 }
 
 # Nomes dos navios
@@ -51,43 +51,41 @@ def parse_message(raw_msg):
     return code, body
 
 def build_attack_message(x, y):
-    """Constrói mensagem de ataque com coordenadas"""
+    """cria msg de ataque"""
     return build_message("100", f"{x},{y}")
 
 def build_hit_message(x, y, ship_type=None, sunk=False):
-    """Constrói mensagem de acerto"""
+    """cria msg de sucesso"""
     if sunk and ship_type:
-        code = SHIP_CODES.get(ship_type, ATTACK_HIT)
+        code = SHIP_CODES.get(ship_type, ATAQUE_ACERTO)
         ship_name = SHIP_NAMES.get(ship_type, "navio")
         return build_message(code, f"Afundou {ship_name} em ({x},{y})")
     else:
-        return build_message(ATTACK_HIT, f"Acerto em ({x},{y})")
+        return build_message(ATAQUE_ACERTO, f"Acerto em ({x},{y})")
 
 def build_miss_message(x, y):
-    """Constrói mensagem de erro"""
-    return build_message(ATTACK_MISS, f"Erro em ({x},{y})")
+    """cria msg de erro"""
+    return build_message(ATAQUE_FALHOU, f"Erro em ({x},{y})")
 
 def build_waiting_message():
-    """Constrói mensagem de aguardando oponente"""
-    return build_message(RESPONSE_WAITING, "Aguardando ataques do oponente")
+    return build_message(ESPERANDO_OPONENTE, "Aguardando ataques do oponente")
 
 def build_turn_message():
-    """Constrói mensagem de turno"""
-    return build_message(RESPONSE_TURN, "Seu turno! Digite coordenadas x,y para atacar")
+    return build_message(ATAQUE_OPONENTE, "Seu turno! Digite coordenadas x,y para atacar")
 
 def build_victory_message():
-    """Constrói mensagem de vitória"""
-    return build_message(RESPONSE_VICTORY, "🎉 VOCÊ VENCEU! 🎉")
+    """ cria msg de vitroia"""
+    return build_message(VENCEU, "🎉 VOCÊ VENCEU! 🎉")
 
 def build_defeat_message():
-    """Constrói mensagem de derrota"""
-    return build_message(RESPONSE_DEFEAT, "💥 VOCÊ PERDEU! 💥")
+    """cria msg derrota"""
+    return build_message(PERDEU, "💥 VOCÊ PERDEU! 💥")
 
 def build_game_end_message():
-    """Constrói mensagem de fim de jogo"""
-    return build_message(RESPONSE_GAME_END, "Jogo finalizado")
+    """msg  fim de jogo"""
+    return build_message(FIM_PARTIDA, "Jogo finalizado")
 
 def get_ship_sunk_message(ship_type):
-    """Retorna mensagem de navio afundado"""
+    """msg navio afundado"""
     ship_name = SHIP_NAMES.get(ship_type, "navio")
     return f"🚢 {ship_name} afundado!"
