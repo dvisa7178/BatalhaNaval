@@ -32,21 +32,21 @@ def recv_message(conn):
         data = conn.recv(4096).decode('utf-8')
         if not data:
             return None, None
-        print(f"[📥] Dados recebidos: '{data}'")
+        print(f"Dados recebidos: '{data}'")
         return parse_message(data)
     except Exception as e:
-        print(f"[❌] Erro ao receber mensagem: {e}")
+        print(f"Erro ao receber mensagem: {e}")
         return None, None
 
 def send_message(conn, msg):
     try:
         conn.send(msg.encode('utf-8'))
-        print(f"[📤] Mensagem enviada: {msg[:50]}...")
+        print(f"Mensagem enviada: {msg[:50]}...")
         # Pequeno delay para evitar concatenação de mensagens
         import time
         time.sleep(0.1)
     except Exception as e:
-        print(f"[❌] Erro ao enviar mensagem: {e}")
+        print(f"Erro ao enviar mensagem: {e}")
 
 def send_map_update(player, message_text):
     """Envia mapas atualizados junto com mensagem"""
@@ -77,16 +77,16 @@ def handle_game():
         defender = players[opponent]
 
         # Informar quem é o turno atual usando o novo protocolo
-        print(f"[🎯] Enviando turno para Player {current + 1}")
+        print(f" Enviando turno para Player {current + 1}")
         send_message(attacker.conn, build_turn_message())
         send_message(defender.conn, build_waiting_message())
-        print(f"[⏳] Aguardando ataque do Player {current + 1}")
+        print(f" Aguardando ataque do Player {current + 1}")
         
         code, body = recv_message(attacker.conn)
 
         # Verificar se é uma mensagem de ataque (aceitar tanto "100" quanto "100 ATTACK")
-        if not (code == "100" or code == ATTACK):
-            print(f"[❌] Código inválido recebido: '{code}', esperava ataque")
+        if not (code == "100" or code == ATAQUE):
+            print(f" Código inválido recebido: '{code}', esperava ataque")
             send_map(attacker, "Esperava mensagem de ataque.")
             continue
 
@@ -109,11 +109,11 @@ def handle_game():
                 # Navio foi afundado
                 attacker_msg = build_hit_message(x, y, ship_type, True)
                 defender_msg = build_message(SHIP_CODES[ship_type], f"Seu {SHIP_NAMES[ship_type]} foi afundado em ({x},{y})")
-                print(f"[💥] {SHIP_NAMES[ship_type]} afundado em ({x},{y})!")
+                print(f" {SHIP_NAMES[ship_type]} afundado em ({x},{y})!")
             else:
                 # Acerto normal
                 attacker_msg = build_hit_message(x, y)
-                defender_msg = build_message(ATTACK_HIT, f"Seu navio foi atingido em ({x},{y})")
+                defender_msg = build_message(ATAQUE_ACERTO, f"Seu navio foi atingido em ({x},{y})")
             
             # Enviar mensagens de resultado
             send_message(attacker.conn, attacker_msg)
@@ -123,12 +123,12 @@ def handle_game():
             send_map_update(attacker, f"Acertou em ({x},{y}) - Continue!")
             send_map_update(defender, f"Atingido em ({x},{y}) - Aguarde")
             
-            print(f"[🎯] Player {current + 1} continua atacando (acerto)")
+            print(f" Player {current + 1} continua atacando (acerto)")
             
         else:
             # Erro/Miss
             attacker_msg = build_miss_message(x, y)
-            defender_msg = build_message(ATTACK_MISS, f"Oponente errou em ({x},{y})")
+            defender_msg = build_message(ATAQUE_FALHOU, f"Oponente errou em ({x},{y})")
             
             # Enviar mensagens de erro
             send_message(attacker.conn, attacker_msg)
@@ -140,7 +140,7 @@ def handle_game():
             
             # Alternar turno apenas quando erra
             current, opponent = opponent, current
-            print(f"[🔄] Turno alternado para Player {current + 1} (erro)")
+            print(f"Turno alternado para Player {current + 1} (erro)")
 
         # Verificar vitória
         if defender.game.all_ships_destroyed():
@@ -152,12 +152,12 @@ def handle_game():
             send_message(attacker.conn, build_game_end_message())
             send_message(defender.conn, build_game_end_message())
             
-            print(f"[🎮] Jogo finalizado! Player {current + 1} venceu!")
+            print(f"Jogo finalizado! Player {current + 1} venceu!")
             break
 
         # Após processar o ataque, informar sobre próximo turno
         # O turno só foi alternado se errou (lógica já executada acima)
-        print(f"[🔄] Próximo turno será do Player {current + 1}")
+        print(f"Próximo turno será do Player {current + 1}")
 
 def accept_players():
     local_ip = get_local_ip()
@@ -168,7 +168,7 @@ def accept_players():
         s.listen()
         
         print("=" * 50)
-        print("🚢 SERVIDOR BATALHA NAVAL INICIADO 🚢")
+        print(" SERVIDOR BATALHA NAVAL INICIADO ")
         print("=" * 50)
         print(f"IP do Servidor: {local_ip}")
         print(f"Porta: {PORT}")
