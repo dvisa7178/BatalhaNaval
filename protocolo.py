@@ -12,7 +12,7 @@ ENCOURACADO = "104"  # afundou encouraçado
 CRUZADOR = "105"     # afundou cruzador
 SUBMARINO = "106"   # afundou submarino
 FRAGATA = "107"     # afundou fragata
-TORPEDEIRO = "108"     #afundou torpedeiro
+TORPEDEIRO = "108"      #afundou torpedeiro
 
 # Códigos de resposta 
 ESPERANDO_OPONENTE = "201"  # esperando oponente atacar
@@ -51,7 +51,7 @@ def parse_message(raw_msg):
     return code, body
 
 def build_attack_message(x, y):
-    """cria msg de ataque"""
+    """Constrói mensagem de ataque com coordenadas"""
     return build_message("100", f"{x},{y}")
 
 def build_hit_message(x, y, ship_type=None, sunk=False):
@@ -86,6 +86,6 @@ def build_game_end_message():
     return build_message(FIM_PARTIDA, "Jogo finalizado")
 
 def get_ship_sunk_message(ship_type):
-    """msg navio afundado"""
+    """Retorna mensagem de navio afundado"""
     ship_name = SHIP_NAMES.get(ship_type, "navio")
-    return f"🚢 {ship_name} afundado!"
+    return f" {ship_name} afundado!"
