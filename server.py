@@ -77,16 +77,16 @@ def handle_game():
         defender = players[opponent]
 
         # Informar quem é o turno atual usando o novo protocolo
-        print(f" Enviando turno para Player {current + 1}")
+        print(f"Enviando turno para Player {current + 1}")
         send_message(attacker.conn, build_turn_message())
         send_message(defender.conn, build_waiting_message())
-        print(f" Aguardando ataque do Player {current + 1}")
+        print(f"Aguardando ataque do Player {current + 1}")
         
         code, body = recv_message(attacker.conn)
 
-        # Verificar se é uma mensagem de ataque (aceitar tanto "100" quanto "100 ATTACK")
+        # Verificar se é uma mensagem de ataque (aceitar tanto "100" quanto "100 ATAQUE")
         if not (code == "100" or code == ATAQUE):
-            print(f" Código inválido recebido: '{code}', esperava ataque")
+            print(f"Código inválido recebido: '{code}', esperava ataque")
             send_map(attacker, "Esperava mensagem de ataque.")
             continue
 
@@ -123,7 +123,7 @@ def handle_game():
             send_map_update(attacker, f"Acertou em ({x},{y}) - Continue!")
             send_map_update(defender, f"Atingido em ({x},{y}) - Aguarde")
             
-            print(f" Player {current + 1} continua atacando (acerto)")
+            print(f"Player {current + 1} continua atacando (acerto)")
             
         else:
             # Erro/Miss
@@ -154,10 +154,40 @@ def handle_game():
             
             print(f"Jogo finalizado! Player {current + 1} venceu!")
             break
+            
+        else:
+            # Erro/Miss
+            attacker_msg = build_miss_message(x, y)
+            defender_msg = build_message(ATAQUE_FALHOU, f"Oponente errou em ({x},{y})")
+            
+            # Enviar mensagens de erro
+            send_message(attacker.conn, attacker_msg)
+            send_message(defender.conn, defender_msg)
+            
+            # Enviar mapas atualizados após o resultado
+            send_map_update(attacker, f"Errou em ({x},{y}) - Turno do oponente")
+            send_map_update(defender, f"Oponente errou em ({x},{y}) - Seu turno!")
+            
+            # Alternar turno apenas quando erra
+            current, opponent = opponent, current
+            print(f" Turno alternado para Player {current + 1} (erro)")
+
+        # Verificar vitória
+        if defender.game.all_ships_destroyed():
+            # Enviar mensagens de fim de jogo usando o novo protocolo
+            send_message(attacker.conn, build_victory_message())
+            send_message(defender.conn, build_defeat_message())
+            
+            # Mensagem final de fim de jogo para ambos
+            send_message(attacker.conn, build_game_end_message())
+            send_message(defender.conn, build_game_end_message())
+            
+            print(f" Jogo finalizado! Player {current + 1} venceu!")
+            break
 
         # Após processar o ataque, informar sobre próximo turno
         # O turno só foi alternado se errou (lógica já executada acima)
-        print(f"Próximo turno será do Player {current + 1}")
+        print(f" Próximo turno será do Player {current + 1}")
 
 def accept_players():
     local_ip = get_local_ip()
@@ -168,7 +198,7 @@ def accept_players():
         s.listen()
         
         print("=" * 50)
-        print(" SERVIDOR BATALHA NAVAL INICIADO ")
+        print("SERVIDOR BATALHA NAVAL INICIADO")
         print("=" * 50)
         print(f"IP do Servidor: {local_ip}")
         print(f"Porta: {PORT}")
@@ -188,10 +218,10 @@ def accept_players():
                 continue
 
             players.append(player)
-            print(f"[✓] Jogador {len(players)}/2 conectado (IP: {addr[0]})")
-            send_map(player, "Bem-vindo! Aguardando o outro jogador...")
+            print(f"Jogador {len(players)}/2 conectado (IP: {addr[0]})")
+            send_map(player, f"Bem-vindo! Aguardando o segundo jogador... ({len(players)}/2)")
 
-        print("\n[🎮] Ambos jogadores conectados! Iniciando jogo...")
+        print("\nAmbos jogadores conectados! Iniciando jogo...")
         game_thread = threading.Thread(target=handle_game)
         game_thread.start()
 
