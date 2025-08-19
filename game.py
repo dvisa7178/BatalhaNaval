@@ -75,7 +75,7 @@ class Game:
     @staticmethod
     def print_map(board, title):
         """Imprime o mapa em formato de matriz para Ubuntu"""
-        print(f"\n{title}")
+        print(f"\n {title}")
         print("━" * 42)
         
         # Cabeçalho das colunas
