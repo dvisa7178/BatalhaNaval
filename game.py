@@ -114,8 +114,8 @@ class Game:
         print("  └" + "───┴" * 9 + "───┘")
         
         # Legenda
-        print("Legenda: · = Água | ✗ = Acerto | ○ = Erro")
-        print("Navios: A=Porta-aviões B=Encouraçado C=Cruzador S=Submarino F=Fragata T=Torpedeiro\n")
+        print(" Legenda: · = Água | ✗ = Acerto | ○ = Erro")
+        print(" Navios: A=Porta-aviões B=Encouraçado C=Cruzador S=Submarino F=Fragata T=Torpedeiro\n")
         
     @staticmethod
     def print_map_simple(board, title):
