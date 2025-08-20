@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import socket
 import json
@@ -53,7 +51,7 @@ def get_attack_coordinates_with_timeout():
                         # Tentar fazer parse das coordenadas
                         parts = coords.split(',')
                         if len(parts) != 2:
-                            print("Formato inválido! Use exatamente x,y (exemplo: 3,5)")
+                            print(" Formato inválido! Use exatamente x,y (exemplo: 3,5)")
                             continue
                         
                         x, y = map(int, parts)
@@ -290,22 +288,22 @@ def main():
                         print(f" Ataque automático enviado: ({x},{y})")
                     else:
                         print(f"✓ Ataque enviado: ({x},{y})")
-                        
+
                 elif code == ESPERANDO_OPONENTE or code == "201":
                     print(" Aguardando ataques do oponente...")
-                    
+
                 elif code == ATAQUE_ACERTO or code == "101":
                     print(f" {body}")
-                    
+
                 elif code == ATAQUE_FALHOU or code == "100":
                     print(f" {body}")
                     
                 elif code in [PORTA_AVIOES, ENCOURACADO, CRUZADOR, SUBMARINO, FRAGATA, TORPEDEIRO]:
                     print(f" {body}")
-                    
-                elif code == VENCEU or code == "203":
+
+                elif code == GANHOU or code == "203":
                     print(f" {body}")
-                    
+
                 elif code == PERDEU or code == "204":
                     print(f" {body}")
                     
